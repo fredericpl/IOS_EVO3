@@ -22,4 +22,18 @@ class CryptoDetailCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
+    func setupCell(historic: Log ) {
+        
+        dateLB.text = historic.date
+        
+        let price = Double(historic.priceUsd)
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = "USD"
+        let formattedPrice = formatter.string(from: price as! NSNumber)
+        
+        valueLB.text = formattedPrice
+        
+    }
+    
 }

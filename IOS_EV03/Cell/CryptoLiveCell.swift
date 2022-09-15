@@ -51,11 +51,15 @@ class CryptoLiveCell: UITableViewCell {
         cryptoPerc.text = coin.changePercent24Hr
         cryptoNumbLb.text = coin.rank
         
+        
+        
         let price = Double(coin.priceUsd)
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
+        formatter.currencyCode = "USD"
+        let formattedPrice = formatter.string(from: price as! NSNumber)
         
-        cryptoValueLb.text = coin.priceUsd
+        cryptoValueLb.text = formattedPrice
     
     }
   

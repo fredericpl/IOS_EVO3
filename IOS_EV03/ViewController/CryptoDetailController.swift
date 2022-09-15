@@ -6,10 +6,13 @@
 //
 
 import UIKit
+import Alamofire
 
 class CryptoDetailController: UIViewController {
     
     var coin : Coin!
+    var historic = [Log]()
+    var coinApi = "https://api.coincap.io/v2/assets/bitcoin/history?interval=d1"
 
     @IBOutlet weak var cryptoValueLb: UILabel!
     @IBOutlet weak var cryptoNameLb: UILabel!
@@ -17,10 +20,57 @@ class CryptoDetailController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        
         cryptoNameLb.text = coin.name
-        cryptoValueLb.text = "\(coin.priceUsd) $"
+        
+        let price = Double(coin.priceUsd)
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = "USD"
+        let formattedPrice = formatter.string(from: price as! NSNumber)
+        cryptoValueLb.text = formattedPrice
+        CryptoDetailTableView.dataSource = self
+        CryptoDetailTableView.register(UINib(nibName: "CryptoDetailCell", bundle: nil), forCellReuseIdentifier: "CryptoDetailCell")
+        CryptoDetailTableView.rowHeight = 60
+        
+        fetchCoin()
+        
+        
+        
 
         // Do any additional setup after loading the view.
+    }
+    
+    
+    func fetchCoin() {
+        AF.request(coinApi).response { [weak self] dataResponse in
+            guard let self = self else {return}
+            
+            switch dataResponse.result {
+                
+            case .success(let data) :
+                guard let data = data else { return }
+                    
+                do {
+                    let decoder = JSONDecoder()
+                    let response = try decoder.decode(Historic.self, from: data)
+                    self.historic = response.data
+                    
+                    self.historic.reverse()
+                    
+                    self.CryptoDetailTableView.reloadData()
+                    
+                    
+                    
+                } catch {
+                    print(error)
+                }
+            case .failure(let error):
+                print(error)
+            }
+
+        }
     }
     
 
@@ -28,11 +78,16 @@ class CryptoDetailController: UIViewController {
 
 extension CryptoDetailController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        coin.
+        historic.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        <#code#>
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CryptoDetailCell", for: indexPath) as! CryptoDetailCell
+        
+        let historic = historic[indexPath.row]
+        cell.setupCell(historic: historic)
+        
+        return cell
     }
     
     

@@ -6,3 +6,13 @@
 //
 
 import Foundation
+
+struct Historic: Codable {
+    var data : [Log]
+}
+
+struct Log: Codable {
+    var priceUsd: String
+    var time: Int
+    var date: String
+}

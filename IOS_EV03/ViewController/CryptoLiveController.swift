@@ -29,15 +29,22 @@ class CryptoLiveController: UIViewController {
         
         CryptoLiveTableView.rowHeight = 100
         
-        fetchCoin()
+        SortedCryptoSegmented.addTarget(self, action: #selector(segmentedCrytptoChanged), for: UIControl.Event.valueChanged)
+        
+        // fetchCoin()
+        
+        let refreshCrontol = UIRefreshControl()
+        refreshCrontol.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        refreshCrontol.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        CryptoLiveTableView.refreshControl = refreshCrontol
+        
+        refreshData()
         
         
     }
     
-
-    
-    
-    func fetchCoin() {
+    @objc
+    func refreshData() {
         AF.request(coinApi).response { [weak self] dataResponse in
             guard let self = self else {return}
             
@@ -62,8 +69,30 @@ class CryptoLiveController: UIViewController {
             }
 
         }
+        self.CryptoLiveTableView.refreshControl?.endRefreshing()
     }
     
+    
+    @objc
+    func segmentedCrytptoChanged(_ sender: UISegmentedControl) {
+        if sender .selectedSegmentIndex == 0 {
+            
+        } else if sender .selectedSegmentIndex == 1 {
+            
+        } else {
+            
+        }
+    }
+    
+    }
+
+
+    
+
+    
+    
+    func fetchCoin() {
+      
 
 
 }
@@ -96,12 +125,10 @@ extension CryptoLiveController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = storyboard?.instantiateViewController(withIdentifier: "CryptoDetailController") as! CryptoDetailController
         vc.coin = coins[indexPath.row]
-        self.present(vc, animated: true, completion: nil)
+       // self.present(vc, animated: true, completion: nil)
+        navigationController?.pushViewController(vc, animated: true)
         
-        
-//        vc.CryptoDetailTableView.delegate = self
-//        vc.CryptoDetailTableView.dataSource = self
-//        vc.CryptoDetailTableView.register(UINib(nibName: "CryptoDetailCell", bundle: nil), forCellReuseIdentifier: "CryptoDetailCell")
+
         
        
         
