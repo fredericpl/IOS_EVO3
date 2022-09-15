@@ -12,8 +12,9 @@ class CryptoDetailController: UIViewController {
     
     var coin : Coin!
     var historic = [Log]()
-    var coinApi = "https://api.coincap.io/v2/assets/bitcoin/history?interval=d1"
+    
 
+    
     @IBOutlet weak var cryptoValueLb: UILabel!
     @IBOutlet weak var cryptoNameLb: UILabel!
     @IBOutlet weak var CryptoDetailTableView: UITableView!
@@ -44,7 +45,7 @@ class CryptoDetailController: UIViewController {
     
     
     func fetchCoin() {
-        AF.request(coinApi).response { [weak self] dataResponse in
+        AF.request("https://api.coincap.io/v2/assets/\(coin.id)/history?interval=d1").response { [weak self] dataResponse in
             guard let self = self else {return}
             
             switch dataResponse.result {
